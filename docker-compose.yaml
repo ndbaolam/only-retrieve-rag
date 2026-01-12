@@ -1,0 +1,44 @@
+services:
+  minio:
+    image: minio/minio:RELEASE.2024-01-16T16-07-38Z
+    container_name: minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./minio_data:/data
+
+  milvus:
+    image: milvusdb/milvus:v2.4.4
+    container_name: milvus
+    command: ["milvus", "run", "standalone"]
+    depends_on:
+      - minio
+    ports:
+      - "19530:19530"
+      - "9091:9091"
+    volumes:
+      - ./milvus_data:/var/lib/milvus
+    environment:
+      ETCD_USE_EMBED: "true"
+
+      MINIO_ADDRESS: minio:9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_USE_SSL: "false"
+      MINIO_BUCKET_NAME: a-bucket
+
+  attu:
+    image: zilliz/attu:v2.4
+    container_name: attu
+    depends_on:
+      - milvus
+    ports:
+      - "3000:3000"
+    environment:
+      MILVUS_HOST: milvus
+      MILVUS_PORT: 19530
