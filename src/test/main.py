@@ -1,35 +1,29 @@
 from app.vectorstores import get_vectordb
-from app.ingestion import dataframe_to_documents
+from app.ingestion import dataframe_to_documents, chunking
 from uuid import uuid4
 import pandas as pd
 
-if __name__ == "__main__":
+import asyncio
+
+async def main():
     vector_store = get_vectordb(
-        collection_name="test_3"
+        collection_name="test_chunk"
     )
 
-    df = pd.read_csv("data/kb_info.csv").sample(n=3)
+    df = pd.read_csv("data/kb_info.csv").iloc[:3]
 
     docs = dataframe_to_documents(
         df,
-        content_cols=["summary", "solution"],
-        metadata_cols=["documentid", "last_updated", "reference", "applies_to", "cause", "product_versions", "service", "title"]
+        content_cols=["summary"],
+        metadata_cols=["documentid", "last_updated", "reference", "applies_to", "cause", "product_versions", "service", "title", "solution"]
     )
 
-    # client = vector_store.client
-    # schema = client.create_schema(
-    #     auto_id=False,
-    #     enable_dynamic_field=True,
-    # )
+    chunks = chunking(docs)
 
-    # schema.add_field(
-    #     field_name="pk",
-    #     datatype=DataType.VARCHAR,
-    #     max_length=16,
-    #     is_primary=True,
-    # )
+    ids = [str(uuid4()) for _ in range(len(chunks))]
 
-    ids = [str(uuid4()) for _ in range(len(docs))]
+    await vector_store.aadd_documents(chunks, ids=ids)
 
-    vector_store.add_documents(docs, ids=ids)
+if __name__ == "__main__":
+    asyncio.run(main())
     
