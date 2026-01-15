@@ -35,7 +35,6 @@ EOF
 
 # Copy source code
 COPY src ./src
-COPY data ./data
 
 # Expose port
 EXPOSE 8000

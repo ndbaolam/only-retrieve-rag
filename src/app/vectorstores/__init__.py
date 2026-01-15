@@ -34,8 +34,7 @@ def get_vectordb(collection_name: str):
         vector_field=["dense", "sparse"],
         collection_name=collection_name,
         connection_args={
-            "host": settings.milvus_host,
-            "port": settings.milvus_port,
+            "uri": settings.milvus_url
         },
         consistency_level="Bounded",
         drop_old=False,

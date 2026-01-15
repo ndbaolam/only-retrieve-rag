@@ -14,9 +14,7 @@ class Settings(BaseSettings):
     temperature: float = 0.2
     num_ctx: int = 4096
 
-    milvus_host: str = "localhost"
-    milvus_port: int = 19530
-
+    milvus_url: str = "http://localhost:19530"
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
