@@ -1,6 +1,5 @@
 from app.vectorstores import get_vectordb
-from app.ingestion import dataframe_to_documents, chunking
-from uuid import uuid4
+from app.ingestion import upsert_documents
 import pandas as pd
 
 import asyncio
@@ -10,19 +9,32 @@ async def main():
         collection_name="test_chunk"
     )
 
-    df = pd.read_csv("data/kb_info.csv").iloc[:3]
+    for i, df_batch in enumerate(
+        pd.read_csv("data/kb_info.csv", chunksize=1)
+    ):
+        print(f"Processing CSV batch {i}")
 
-    docs = dataframe_to_documents(
-        df,
-        content_cols=["summary"],
-        metadata_cols=["documentid", "last_updated", "reference", "applies_to", "cause", "product_versions", "service", "title", "solution"]
-    )
+        await upsert_documents(
+            vector_store=vector_store,
+            df=df_batch,
+            content_cols=["summary"],
+            metadata_cols=[
+                "documentid",
+                "last_updated",
+                "reference",
+                "applies_to",
+                "cause",
+                "product_versions",
+                "service",
+                "title",
+                "solution",
+            ],
+            collection_name="test_chunk",
+            is_chunked=False
+        )
 
-    chunks = chunking(docs)
+        break
 
-    ids = [str(uuid4()) for _ in range(len(chunks))]
-
-    await vector_store.aadd_documents(chunks, ids=ids)
 
 if __name__ == "__main__":
     asyncio.run(main())

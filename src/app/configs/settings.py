@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     embedding_provider: Literal["ollama", "openai", "hf"]
 
     # ollama
-    base_url: str | None = None
+    ollama_url: str | None = "http://localhost:11434"
     llm_model: str | None = None
     embed_model: str | None = None
     temperature: float = 0.2
