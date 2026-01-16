@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 # Download model
 RUN --mount=type=cache,target=/root/.cache/huggingface \
-    uv run python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='cross-encoder/ms-marco-MiniLM-L-6-v2', cache_dir='/models/huggingface')"
+    uv run python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='BAAI/bge-large-en-v1.5', cache_dir='/models/huggingface')"
 
 # Copy source code and install
 COPY src ./src

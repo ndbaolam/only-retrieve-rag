@@ -10,7 +10,7 @@ def get_ce_model():
     global _ce_model
     if _ce_model is None:
         _ce_model = HuggingFaceCrossEncoder(
-            model_name="cross-encoder/ms-marco-MiniLM-L-6-v2",
+            model_name="BAAI/bge-large-en-v1.5",
             model_kwargs={"device": "cpu"},
         )
     return _ce_model
