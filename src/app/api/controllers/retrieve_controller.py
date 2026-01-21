@@ -2,7 +2,6 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 
 from app.vectorstores import get_vectordb
 from app.schemas.retrieve_schema import RetrieveInput
-from app.reranker import rerank_docs
 
 def retrieve_router(input: RetrieveInput):
     collection = input["collection"]
@@ -19,14 +18,7 @@ def retrieve_router(input: RetrieveInput):
 
     docs =  retriever.invoke(query)
 
-    results = rerank_docs(
-        inputs={
-            "documents": docs,
-            "question": query
-        }
-    )
-
-    return results
+    return docs
 
 
 def build_retrieve_chain():

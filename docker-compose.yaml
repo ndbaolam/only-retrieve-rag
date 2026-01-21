@@ -1,12 +1,12 @@
 services:
-  # ollama:
-  #   image: ollama/ollama:latest
-  #   container_name: ollama
-  #   ports:
-  #     - "11434:11434"
-  #   volumes:
-  #     - ollama:/root/.ollama
-  #   restart: unless-stopped
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11234:11434"
+    volumes:
+      - ollama:/root/.ollama
+    restart: unless-stopped
 
   etcd:
     container_name: milvus-etcd
@@ -79,15 +79,19 @@ services:
       MILVUS_HOST: milvus
       MILVUS_PORT: 19530
 
-  # rag:
-  #   build: .
-  #   environment:
-  #     LLM_PROVIDER: ollama          # ollama | openai | vllm
-  #     EMBEDDING_PROVIDER: ollama   # ollama | openai | hf
-  #     EMBED_MODEL: "bge-m3:567m"
-  #     OLLAMA_URL: "http://ollama:11434"
-  #     MILVUS_URL: "http://milvus:19530"
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - milvus
+  rag:
+    build: .
+    environment:
+      LLM_PROVIDER: ollama          # ollama | openai | vllm
+      EMBEDDING_PROVIDER: ollama   # ollama | openai | hf
+      EMBED_MODEL: "bge-m3:567m"
+      OLLAMA_URL: "http://ollama:11434"
+      MILVUS_URL: "http://milvus:19530"
+    ports:
+      - "8169:8000"
+    depends_on:
+      - milvus
+      - ollama
+
+volumes:
+  ollama:

@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app/src
+# ENV PYTHONPATH=/app/src
 
 WORKDIR /app
 
@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y curl \
 
 COPY pyproject.toml requirements.txt ./
 
-RUN pip install --upgrade pip \
-    && pip install -e .
-
 COPY src ./src
+
+RUN pip install --upgrade pip \
+    && pip install .
 
 EXPOSE 8000
 
